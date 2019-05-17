@@ -1,36 +1,40 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
+import { AlertifyService } from '../services/alertify.service';
 
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
-  styles: []
+  styles: [
+    '.dropdown-toggle { cursor: pointer; }',
+    '.dropdown-item { cursor: pointer }'
+  ]
 })
 export class NavComponent implements OnInit {
   
   model: any = {};
 
-  constructor( private _authService: AuthService ) { }
+  constructor( public _authService: AuthService,
+               private _alertify: AlertifyService ) { }
 
   ngOnInit() {
   }
 
   login() {
     this._authService.login(this.model).subscribe(next => {
-      console.log('Logged in successfuly');
+      this._alertify.success('Logged in successfuly');
     }, error => {
-      console.log(error);
+      this._alertify.error(error);
     });
   }
 
   loggedIn() {
-    const token = localStorage.getItem('token');
-    return !!token;
+    return this._authService.loggedIn();
   }
 
   logout() {
     localStorage.removeItem('token');
-    console.log('Logged out');
+    this._alertify.message('Logged out');
   }
 
 }
